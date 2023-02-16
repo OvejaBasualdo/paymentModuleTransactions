@@ -13,7 +13,7 @@ public final class TransactionUtils {
     public static Boolean checkingEmptyData(TransactionDTO transactionDTO) throws Exception {
         if (transactionDTO.getFromAccount().isEmpty() || transactionDTO.getToAccount().isEmpty()
                 || transactionDTO.getTransactionType() == null || transactionDTO.getPaymentType() == null
-                || transactionDTO.getTransactionDate().toString().isEmpty()
+                || transactionDTO.getScheduledDate().toString().isEmpty()
                 || transactionDTO.getAmount().toString().isEmpty()) {
             return true;
         } else {
@@ -65,8 +65,8 @@ public final class TransactionUtils {
         }
     }
 
-    public static Boolean dateBefore(LocalDateTime date) {
-        if (date.toLocalDate().isBefore(LocalDate.now())) {
+    public static Boolean dateBefore(LocalDate date) {
+        if (date.isBefore(LocalDate.now())) {
             return true;
         } else {
             return false;

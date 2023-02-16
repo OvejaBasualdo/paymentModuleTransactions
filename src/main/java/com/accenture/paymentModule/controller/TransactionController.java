@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -21,8 +22,6 @@ public class TransactionController {
     @Qualifier("transactionServiceFeign")
     private ITransactionService transactionService;
 
-    @Autowired
-    private SenderController senderController;
 
     @GetMapping("/list")
     public List<Transaction> userList() {
@@ -37,15 +36,20 @@ public class TransactionController {
     @PostMapping("/create")
     public ResponseEntity<Object> createTransaction(@RequestBody TransactionDTO transactionDTO) throws Exception {
         try {
+            if (transactionDTO.getScheduledDate() == null ||
+                    transactionDTO.getScheduledDate().toString().trim().isEmpty()) {
+                LocalDate today = LocalDate.now();
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String formattedDate = today.format(dateTimeFormatter);
+                transactionDTO.setScheduledDate(LocalDate.parse(formattedDate, dateTimeFormatter));
+            }
             if (transactionDTO.getPaymentType().equals(PaymentType.ECHEQ)
                     || transactionDTO.getPaymentType().equals(PaymentType.CARD)
-                    || transactionDTO.getTransactionDate().toLocalDate().isAfter(LocalDate.now())) {
-                //ENDPOINT DE CTA ORIGEN ASI ACUTALIZA RAPIDO
-                //TRANSACCION SAVE = GENERA JSON TRANSACTION
-                String message = senderController.convertAndSend(transactionDTO);
-          //      senderController.send("This is a test transaction");
-                Transaction transaction =transactionService.createSpecialTransaction(transactionDTO);
-                return new ResponseEntity<>(message, HttpStatus.OK);
+                    || transactionDTO.getScheduledDate().isAfter(LocalDate.now())) {
+                Transaction transaction = transactionService.createSpecialTransaction(transactionDTO);
+                transactionService.transactionScheduled();
+//                String message = senderController.convertAndSend(transaction);
+                return new ResponseEntity<>("The transaction will be processed", HttpStatus.OK);
             } else {
                 Transaction transaction = transactionService.generateTransaction(transactionDTO);
                 return new ResponseEntity<>(transaction, HttpStatus.OK);

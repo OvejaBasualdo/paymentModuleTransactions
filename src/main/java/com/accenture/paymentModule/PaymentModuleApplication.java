@@ -10,8 +10,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 public class PaymentModuleApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PaymentModuleApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PaymentModuleApplication.class, args);
+    }
 
 }

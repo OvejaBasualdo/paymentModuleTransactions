@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -14,6 +15,9 @@ public class TransactionDTO implements Serializable {
     private BigDecimal amount;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime transactionDate;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate scheduledDate;
     private TransactionType transactionType;
     private PaymentType paymentType;
     private String fromAccount;
@@ -87,5 +91,12 @@ public class TransactionDTO implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    public LocalDate getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(LocalDate scheduledDate) {
+        this.scheduledDate = scheduledDate;
     }
 }

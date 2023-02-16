@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -20,20 +21,42 @@ public class Transaction {
     private BigDecimal amount;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime transactionDate;
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate scheduledDate;
     private TransactionType transactionType;
     private PaymentType paymentType;
     private String fromAccount;
     private String toAccount;
     private String description;
+    private Boolean wasProcessed;
 
     public Transaction(TransactionDTO transactionDTO) {
         this.amount = transactionDTO.getAmount();
-        this.transactionDate = transactionDTO.getTransactionDate();
+        this.transactionDate = LocalDateTime.now();
+        this.scheduledDate = transactionDTO.getScheduledDate();
         this.transactionType = transactionDTO.getTransactionType();
         this.paymentType = transactionDTO.getPaymentType();
         this.fromAccount = transactionDTO.getFromAccount();
         this.toAccount = transactionDTO.getToAccount();
         this.description = transactionDTO.getDescription();
+        this.wasProcessed = Boolean.FALSE;
+    }
+
+    public Boolean getWasProcessed() {
+        return wasProcessed;
+    }
+
+    public void setWasProcessed(Boolean wasProcessed) {
+        this.wasProcessed = wasProcessed;
+    }
+
+    public LocalDate getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(LocalDate scheduledDate) {
+        this.scheduledDate = scheduledDate;
     }
 
     public Long getId() {

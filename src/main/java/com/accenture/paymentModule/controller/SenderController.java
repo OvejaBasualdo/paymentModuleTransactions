@@ -1,6 +1,7 @@
 package com.accenture.paymentModule.controller;
 
 import com.accenture.paymentModule.dtos.TransactionDTO;
+import com.accenture.paymentModule.entity.Transaction;
 import com.google.gson.Gson;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -26,7 +27,7 @@ public class SenderController {
 
     @GetMapping("/send/{message}")
     public String send(@PathVariable("message") String message) {
-        jmsTemplate.send("demo", new MessageCreator() {
+        jmsTemplate.send("transactionDelayed", new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
 
@@ -37,16 +38,19 @@ public class SenderController {
         return message;
     }
 
-    public String convertAndSend(TransactionDTO transactionDTO) {
-
-
-        jmsTemplate.send("demo", new MessageCreator() {
+    public String convertAndSend(Transaction transactionDTO) {
+        jmsTemplate.send("transactionDelayed", new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("amount",transactionDTO.getAmount());
-                jsonObject.put("fromAccount",transactionDTO.getFromAccount());
-                jsonObject.put("toAccount",transactionDTO.getToAccount());
+                jsonObject.put("id", transactionDTO.getId());
+                jsonObject.put("amount", transactionDTO.getAmount());
+                jsonObject.put("fromAccount", transactionDTO.getFromAccount());
+                jsonObject.put("toAccount", transactionDTO.getToAccount());
+                jsonObject.put("paymentType", transactionDTO.getPaymentType());
+                jsonObject.put("boolean", false);
+                System.out.println(transactionDTO.getScheduledDate());
+                jsonObject.put("scheduledDate", transactionDTO.getScheduledDate().toString());
                 ObjectMessage object = session.createObjectMessage(jsonObject.toString());
                 System.out.println(object);
                 return object;
