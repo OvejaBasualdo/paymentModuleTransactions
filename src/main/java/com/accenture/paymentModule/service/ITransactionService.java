@@ -10,5 +10,7 @@ public interface ITransactionService {
     public Transaction findById(Long id);
     public Transaction generateTransaction(TransactionDTO transactionDTO) throws Exception;
     public Transaction createSpecialTransaction(TransactionDTO transactionDTO);
+    public List<Transaction> findByScheduledDateAndWasProcessedFalse();
+    public void transactionScheduled();
 
 }
